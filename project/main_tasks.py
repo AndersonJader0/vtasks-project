@@ -1,11 +1,11 @@
-from test_login import Test_Login
-from test_excel import Test_Excel
+from login_vsts import LoginVSTS
+from excel_generator import excelGenerator
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import re
 
 
-class Test_ExtractTasksCommitted(Test_Login):
+class MainTasks(LoginVSTS):
     tasks = []
     environment = ''
  
@@ -14,7 +14,7 @@ class Test_ExtractTasksCommitted(Test_Login):
         self.environment = self.environment
         super()._init_()
  
-    def test_getTaskApproved(self):
+    def getTasks(self):
         self.Authentication()
         self.wait.until(EC.presence_of_element_located((By.XPATH , '//button[@class="bolt-button enabled subtle bolt-focus-treatment"]')))
  
@@ -24,14 +24,13 @@ class Test_ExtractTasksCommitted(Test_Login):
         num_approveds = 0
         i = 0
         for num_committed, name_committed in zip(num_committeds, name_committeds):
- 
             self.tasks.append({
                 'PBI':num_committed.text,
                 'DESCRIÇÃO':re.sub("- Q[1,2,3]", "", name_committed.text.replace('Sustentação - ', '')),
                 'STATUS': ''
             })
-            status = self.test_check_approval_tasks(num_committed)
-            if status == 'Aprovada':
+            status = self.checkTasks(num_committed)
+            if status == 'aprovada':
                 if self.environment == 'HML2':
                     self.tasks[i]['STATUS'] = 'OK - HML2'
                     self.environment = ''
@@ -46,15 +45,15 @@ class Test_ExtractTasksCommitted(Test_Login):
                     num_approveds += 1
             i += 1
  
-        test_tasks = Test_Excel()
-        test_tasks.test_get_excel(self.tasks, num_approveds)
+        tasks_excel = excelGenerator()
+        tasks_excel.getExcel(self.tasks, num_approveds)
  
-    def test_check_approval_tasks(self, name_committed):
+    def checkTasks(self, name_committed):
         name_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             if 'aprovada' in verify.lower() or 'aprovado' in verify.lower():
-                status = 'Aprovada'
+                status = 'aprovada'
                 if 'prod' in verify.lower() or 'produção' in verify.lower():
                     self.environment = 'PROD'
                     self.browser.back()
@@ -76,5 +75,5 @@ class Test_ExtractTasksCommitted(Test_Login):
             self.browser.back()
             return status
  
-test_extractionTasksCommited = Test_ExtractTasksCommitted()
-test_extractionTasksCommited.test_getTaskApproved()
+mainTasks = MainTasks()
+mainTasks.getTasks()

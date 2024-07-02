@@ -2,9 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
- 
- 
-class Test_Login:
+
+
+class LoginVSTS:
     browser = webdriver.Chrome()
     wait = WebDriverWait(browser, 5)
  
@@ -15,7 +15,7 @@ class Test_Login:
  
     def Authentication(self):
         mail = input('Digite seu e-mail: ')
-        password = input('Digite sua senha')
+        password = input('Digite sua senha: ')
         self.browser.maximize_window()
         self.browser.get('https://dev.azure.com/ONR-SAEC/ONR.Sustentacao/_boards/board/t/ONR.Sustentacao%20Team/Backlog%20items')
         self.browser.implicitly_wait(20)

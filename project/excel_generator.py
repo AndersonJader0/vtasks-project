@@ -1,10 +1,10 @@
 import pandas as pd
 from openpyxl.styles import Alignment
 from xlsxwriter import Workbook
+
+class excelGenerator():
  
-class Test_Excel():
- 
-    def test_get_excel(self, tasks, tasks_aproveds):
+    def getExcel(self, tasks, tasks_aproveds):
         try:
             dados = pd.DataFrame(data= tasks)
             dados.to_excel('Tarefas.xlsx', index=False, sheet_name='Tarefas Committed - Sustentação')
