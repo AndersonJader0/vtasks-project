@@ -30,6 +30,7 @@ class MainTasks(LoginVSTS):
                 'STATUS': ''
             })
             status = self.checkTasks(num_committed)
+            self.browser.back()
             if status == 'aprovada':
                 if self.environment == 'HML2':
                     self.tasks[i]['STATUS'] = 'OK - HML2'
@@ -43,7 +44,21 @@ class MainTasks(LoginVSTS):
                     self.tasks[i]['STATUS'] = 'OK - PROD'
                     self.environment = ''
                     num_approveds += 1
+            elif status != 'aprovada': 
+                if status == 'testar':
+                    self.tasks[i]['STATUS'] = 'Testar'
+                elif status == 'Lucas - testar':
+                    self.tasks[i]['STATUS'] = status
+                elif status == 'Anderson - testar':
+                    self.tasks[i]['STATUS'] = status
+                elif status == 'Vinicius - testar':
+                    self.tasks[i]['STATUS'] = status
+                elif status == 'Leandro - testar':
+                    self.tasks[i]['STATUS'] = status
+                else:
+                    self.tasks[i]['STATUS'] = ''
             i += 1
+
  
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
@@ -56,24 +71,51 @@ class MainTasks(LoginVSTS):
                 status = 'aprovada'
                 if 'prod' in verify.lower() or 'produção' in verify.lower():
                     self.environment = 'PROD'
-                    self.browser.back()
                     return status
                 elif 'pre' in verify.lower() or 'pré' in verify.lower():
                     self.environment = 'PRE'
-                    self.browser.back()
                     return status
                 elif 'hml' in verify.lower() or 'hml2' in verify.lower():
                     self.environment = 'HML2'
-                    self.browser.back()
+                    return status
+            elif 'aprovada' not in verify.lower() or 'aprovado' not in verify.lower():
+                status = self.checkTest(verify)
+                return status
+
+        except:
+            status = self.checkTest(verify)
+            return status
+        
+    def checkTest(self, verify):
+        verify.replace('<','')
+        status = ''
+        if 'testar' in verify or 'validar' in verify:
+            if '@Lucas' in verify or '@Anderson' in verify or '@Vinicius' in verify or '@Leandro' in verify:
+                if '@Anderson' not in verify and '@Vinicius' not in verify and '@Leandro' not in verify:
+                    status = 'Lucas - testar'
+                    return status
+                elif '@Lucas' not in verify and '@Vinicius' not in verify and '@Leandro' not in verify:
+                    status = 'Anderson - testar'
+                    return status
+                elif '@Lucas' not in verify and '@Anderson' not in verify and '@Leandro' not in verify:
+                    status = 'Vinicius - testar'
+                    return status
+                elif '@Lucas' not in verify and '@Anderson' not in verify and '@Vinicius' not in verify:
+                    status = 'Leandro - testar'
+                    return status
+                elif '@Lucas' in verify and '@Anderson' in verify and '@Vinicius' in verify:
+                    status = 'testar'
+                    return status
+                else:
+                    status = 'testar'
                     return status
             else:
                 status = ''
-                self.browser.back()
                 return status
-        except:
+        elif 'testar' not in verify or 'validar' not in verify:
             status = ''
-            self.browser.back()
             return status
+
  
 mainTasks = MainTasks()
 mainTasks.getTasks()
