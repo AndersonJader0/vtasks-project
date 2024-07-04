@@ -5,5 +5,5 @@ Melhorias para implementar
 3 - Verificar se as tarefas possuem effort (só as que estão aprovadas em pré)
 4 - Verificar se as tarefas aprovadas estão na feature deploy
 5 - Excel melhorar a aparência e o código da classe excel_generator
-6 - Exclusão do sustentação e q1 etc com mais eficacia, criar um método para isso.
+6 - Exclusão do sustentação e q1 etc com mais eficacia, criar um método para isso. (feito)
 7 - Tarefas que tem que testar direto em produção (em pré não dá)

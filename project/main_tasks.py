@@ -24,9 +24,10 @@ class MainTasks(LoginVSTS):
         num_approveds = 0
         i = 0
         for num_committed, name_committed in zip(num_committeds, name_committeds):
+            name_committed = self.formatText(name_committed.text) 
             self.tasks.append({
                 'PBI':num_committed.text,
-                'DESCRIÇÃO':re.sub("- Q[1,2,3]", "", name_committed.text.replace('Sustentação - ', '')),
+                'DESCRIÇÃO':name_committed,
                 'STATUS': ''
             })
             status = self.checkTasks(num_committed)
@@ -65,8 +66,8 @@ class MainTasks(LoginVSTS):
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
 
-    def checkTasks(self, name_committed):
-        name_committed.click()
+    def checkTasks(self, num_committed):
+        num_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             verify = self.formatText(verify)
@@ -97,12 +98,14 @@ class MainTasks(LoginVSTS):
             text = text.replace('Sustentação-', '')
             text = text.replace('sustentação -', '')
             text = text.replace('sustentação-', '')
+            text = re.sub(" - Q[1,2,3]", '', text)
+            text = re.sub("- Q[1,2,3]",'', text)
+            text = re.sub("-Q[1,2,3]", '', text)
             return text
         else:
             text = text.replace('<','')
             text = text.lower()
             return text
-        
         
     def checkTest(self, verify):
         status = ''
