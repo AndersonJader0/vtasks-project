@@ -68,7 +68,6 @@ class MainTasks(LoginVSTS):
         tasks_excel.getExcel(self.tasks, num_approveds)
 
     def checkTasks(self, num_committed):
-        
         num_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
@@ -95,14 +94,15 @@ class MainTasks(LoginVSTS):
         if any(user + ' - testar' in text for user in self.USERS_DEPLOY):
             text = text.replace('@', '')
             return text
-        elif 'Sustentação - ' in text or 'Sustentação-' in text or 'sustentação -' in text or 'sustentação-' in text:
-            text = text.replace('Sustentação - ','')
-            text = text.replace('Sustentação-', '')
-            text = text.replace('sustentação -', '')
-            text = text.replace('sustentação-', '')
-            text = re.sub(" - Q[1,2,3]", '', text)
-            text = re.sub("- Q[1,2,3]",'', text)
-            text = re.sub("-Q[1,2,3]", '', text)
+        elif 'sustentação -' in text.lower() or 'sustentação-' in text.lower():
+            SUSTENTACAO = ['Sustentação -', 'Sustentação - ', 'Sustentação-']
+            PRIORITY = ['-Q[1,2,3]', '- Q[1,2,3]', ' - Q[1,2,3]']
+            for sust in SUSTENTACAO:
+                if sust in text:
+                    text = text.replace(sust, '')
+            text = re.sub(PRIORITY[0], '', text)
+            text = re.sub(PRIORITY[1], '', text)
+            text = re.sub(PRIORITY[2], '', text)
             return text
         else:
             text = text.replace('<','')
