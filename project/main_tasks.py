@@ -8,10 +8,18 @@ import re
 class MainTasks(LoginVSTS):
     tasks = []
     environment = ''
+    PROD = ['prod', 'producao', 'produção']
+    PRE = ['pre', 'pré', 'pre-prod', 'pré-prod', 'pre-producao', 'pré-produção']
+    HML2 = ['hml','hml2','homologue','homologação']
+    USERS_DEPLOY = ['@anderson', '@leandro', '@vinicius', '@lucas']
  
     def _init_(self):
         self.tasks = self.tasks
         self.environment = self.environment
+        self.PROD = self.PROD
+        self.PRE = self.PRE
+        self.HML2 = self.HML2
+        self.USERS_DEPLOY = self.USERS_DEPLOY
         super()._init_()
  
     def getTasks(self):
@@ -50,7 +58,7 @@ class MainTasks(LoginVSTS):
             elif status != 'aprovada':
                 match status:
                     case 'testar':
-                        self.tasks[i]['STATUS'] = 'Testar'
+                        self.tasks[i]['STATUS'] = 'testar'
                     case 'lucas - testar':
                         self.tasks[i]['STATUS'] = status
                     case 'anderson - testar':
@@ -67,19 +75,20 @@ class MainTasks(LoginVSTS):
         tasks_excel.getExcel(self.tasks, num_approveds)
 
     def checkTasks(self, num_committed):
+        
         num_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             verify = self.formatText(verify)
             if 'aprovada' in verify or 'aprovado' in verify:
                 status = 'aprovada'
-                if 'prod' in verify or 'produção' in verify:
+                if any(prod in verify for prod in self.PROD):
                     self.environment = 'PROD'
                     return status
-                elif 'pre' in verify or 'pré' in verify:
+                elif any(pre in verify for pre in self.PRE):
                     self.environment = 'PRE'
                     return status
-                elif 'hml' in verify or 'hml2' in verify:
+                elif any(hml2 in verify for hml2 in self.HML2):
                     self.environment = 'HML2'
                     return status
             elif 'aprovada' not in verify or 'aprovado' not in verify:
@@ -109,18 +118,17 @@ class MainTasks(LoginVSTS):
         
     def checkTest(self, verify):
         status = ''
-        users = ['@anderson', '@leandro', '@vinicius', '@lucas']
         i = 0
 
         if 'testar' not in verify and 'validar' not in verify:
             status = ''
             return status
         else:
-            if all(user in verify for user in users):
+            if all(user in verify for user in self.USERS_DEPLOY):
                 status = 'testar'
                 return status
-            elif any(user in verify for user in users):
-                for user in users:
+            elif any(user in verify for user in self.USERS_DEPLOY):
+                for user in self.USERS_DEPLOY:
                     if user in verify:
                         status = user + ' - testar'
                         i += 1
