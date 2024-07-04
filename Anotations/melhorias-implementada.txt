@@ -1,4 +1,4 @@
-Com a atualização do dia 02/07/2024 foi implementado as seguintes funcionalidades:
+Com a atualização do dia 02/07/2024 foi implementado:
 
 1 - É possível verificar as tarefas que solicitaram teste da equipe da deploy assim como para quem foi solicitado.
 2 - O Script detecta as tarefas que estão aprovadas em HML2 (Implementado para completar o sistema)
@@ -7,3 +7,9 @@ Com a atualização do dia 03/07/2024 foi implementado:
 
 1 - Nova funcionalidade formatText que faz a formatação mais precisa dos textos
 2 - Refatoração de algumas partes do código [implementação de match, any, all e listas, users]
+
+Com a atualização do dia 04/07/2024 foi implementado:
+
+1 - Melhoria no método checkTasks
+2 - Correção do método construtor
+3 - Implementação da nova funcionalidade verificar Effort

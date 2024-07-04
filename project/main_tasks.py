@@ -14,6 +14,8 @@ class MainTasks(LoginVSTS):
         self.PRE = ['pre', 'pré', 'pre-prod', 'pré-prod', 'pre-producao', 'pré-produção']
         self.HML2 = ['hml','hml2','homologue','homologação']
         self.USERS_DEPLOY = ['@anderson', '@leandro', '@vinicius', '@lucas']
+        self.hasEffort = False
+        self.effort = ''
  
     def getTasks(self):
         self.Authentication()
@@ -29,7 +31,8 @@ class MainTasks(LoginVSTS):
             self.tasks.append({
                 'PBI':num_committed.text,
                 'DESCRIÇÃO':name_committed,
-                'STATUS': ''
+                'STATUS': '',
+                'EFFORT': ''
             })
             status = self.checkTasks(num_committed)
             status = self.formatText(status)
@@ -48,6 +51,12 @@ class MainTasks(LoginVSTS):
                         self.tasks[i]['STATUS'] = 'OK - PROD'
                         self.environment = ''
                         num_approveds += 1
+                match self.hasEffort:
+                    case True:
+                        self.tasks[i]['EFFORT'] = self.effort
+                        self.hasEffort = False
+                    case False:
+                        self.tasks[i]['EFFORT'] = 'faltou'
             elif status != 'aprovada':
                 match status:
                     case 'testar':
@@ -73,6 +82,7 @@ class MainTasks(LoginVSTS):
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             verify = self.formatText(verify)
             if 'aprovada' in verify or 'aprovado' in verify:
+                self.checkEffort()
                 status = 'aprovada'
                 if any(prod in verify for prod in self.PROD):
                     self.environment = 'PROD'
@@ -131,6 +141,17 @@ class MainTasks(LoginVSTS):
             else:
                 status = ''
                 return status
+            
+    def checkEffort(self):
+        try:
+            self.effort = self.browser.find_element(By.XPATH, '//div[@class="work-item-form-control-wrapper"][2]/div/div[2]/div/div/input')
+            self.effort = self.effort.get_attribute('value')
+            if self.effort != '':
+                self.hasEffort = True
+            return
+        except:
+            print('Erro')
+            return
  
 mainTasks = MainTasks()
 mainTasks.getTasks()

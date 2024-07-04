@@ -15,7 +15,9 @@ class excelGenerator():
         dados = dados._append({
         'PBI': '',
         'DESCRIÇÃO': '',
-        'STATUS': tasks_aproveds},
+        'STATUS': tasks_aproveds,
+        'EFFORT': ''
+        },
         ignore_index=True)
         writer = pd.ExcelWriter('enhanced.xlsx', engine='xlsxwriter')
         dados.to_excel(writer, index=False, sheet_name='Tarefas Committed - Sustentação')
