@@ -30,7 +30,7 @@ class MainTasks(LoginVSTS):
                 'STATUS': ''
             })
             status = self.checkTasks(num_committed)
-            status = status.replace('@','')
+            status = self.formatText(status)
 
             if status == 'aprovada':
                 match self.environment:
@@ -64,13 +64,12 @@ class MainTasks(LoginVSTS):
             self.browser.back()
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
- 
+
     def checkTasks(self, name_committed):
         name_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
-            verify = verify.replace('<', '')
-            verify = verify.lower()
+            verify = self.formatText(verify)
             if 'aprovada' in verify or 'aprovado' in verify:
                 status = 'aprovada'
                 if 'prod' in verify or 'produção' in verify:
@@ -89,8 +88,23 @@ class MainTasks(LoginVSTS):
             status = self.checkTest(verify)
             return status
         
-    def checkTest(self, verify):
+    def formatText(self, text):
+        if text == '@lucas - testar' or text == '@anderson - testar' or text == '@leandro - testar' or text == '@vinicius - testar':
+            text = text.replace('@', '')
+            return text
+        elif 'Sustentação - ' in text or 'Sustentação-' in text or 'sustentação -' in text or 'sustentação-' in text:
+            text = text.replace('Sustentação - ','')
+            text = text.replace('Sustentação-', '')
+            text = text.replace('sustentação -', '')
+            text = text.replace('sustentação-', '')
+            return text
+        else:
+            text = text.replace('<','')
+            text = text.lower()
+            return text
         
+        
+    def checkTest(self, verify):
         status = ''
         users = ['@anderson', '@leandro', '@vinicius', '@lucas']
         i = 0
@@ -103,8 +117,6 @@ class MainTasks(LoginVSTS):
                 status = 'testar'
                 return status
             elif any(user in verify for user in users):
-                print(verify)
-                print(users[0])
                 for user in users:
                     if user in verify:
                         status = user + ' - testar'
