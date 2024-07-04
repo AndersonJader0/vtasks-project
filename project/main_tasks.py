@@ -30,36 +30,38 @@ class MainTasks(LoginVSTS):
                 'STATUS': ''
             })
             status = self.checkTasks(num_committed)
-            self.browser.back()
-            if status == 'aprovada':
-                if self.environment == 'HML2':
-                    self.tasks[i]['STATUS'] = 'OK - HML2'
-                    self.environment = ''
-                    num_approveds += 1
-                elif self.environment == 'PRE':
-                    self.tasks[i]['STATUS'] = 'OK - PRE'
-                    self.environment = ''
-                    num_approveds += 1
-                elif self.environment == 'PROD':
-                    self.tasks[i]['STATUS'] = 'OK - PROD'
-                    self.environment = ''
-                    num_approveds += 1
-            elif status != 'aprovada': 
-                if status == 'testar':
-                    self.tasks[i]['STATUS'] = 'Testar'
-                elif status == '@Lucas - testar':
-                    self.tasks[i]['STATUS'] = status.replace('@', '')
-                elif status == '@Anderson - testar':
-                    self.tasks[i]['STATUS'] = status.replace('@', '')
-                elif status == '@Vinicius - testar':
-                    self.tasks[i]['STATUS'] = status.replace('@', '')
-                elif status == '@Leandro - testar':
-                    self.tasks[i]['STATUS'] = status.replace('@', '')
-                else:
-                    self.tasks[i]['STATUS'] = ''
-            i += 1
+            status = status.replace('@','')
 
- 
+            if status == 'aprovada':
+                match self.environment:
+                    case 'HML2':
+                        self.tasks[i]['STATUS'] = 'OK - HML2'
+                        self.environment = ''
+                        num_approveds += 1
+                    case 'PRE':
+                        self.tasks[i]['STATUS'] = 'OK - PRE'
+                        self.environment = ''
+                        num_approveds += 1
+                    case 'PROD':
+                        self.tasks[i]['STATUS'] = 'OK - PROD'
+                        self.environment = ''
+                        num_approveds += 1
+            elif status != 'aprovada':
+                match status:
+                    case 'testar':
+                        self.tasks[i]['STATUS'] = 'Testar'
+                    case 'lucas - testar':
+                        self.tasks[i]['STATUS'] = status
+                    case 'anderson - testar':
+                        self.tasks[i]['STATUS'] = status
+                    case 'vinicius - testar':
+                        self.tasks[i]['STATUS'] = status
+                    case 'leandro - testar':
+                        self.tasks[i]['STATUS'] = status
+                    case '':
+                        self.tasks[i]['STATUS'] = ''
+            i += 1
+            self.browser.back()
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
  
@@ -67,29 +69,30 @@ class MainTasks(LoginVSTS):
         name_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
-            if 'aprovada' in verify.lower() or 'aprovado' in verify.lower():
+            verify = verify.replace('<', '')
+            verify = verify.lower()
+            if 'aprovada' in verify or 'aprovado' in verify:
                 status = 'aprovada'
-                if 'prod' in verify.lower() or 'produção' in verify.lower():
+                if 'prod' in verify or 'produção' in verify:
                     self.environment = 'PROD'
                     return status
-                elif 'pre' in verify.lower() or 'pré' in verify.lower():
+                elif 'pre' in verify or 'pré' in verify:
                     self.environment = 'PRE'
                     return status
-                elif 'hml' in verify.lower() or 'hml2' in verify.lower():
+                elif 'hml' in verify or 'hml2' in verify:
                     self.environment = 'HML2'
                     return status
-            elif 'aprovada' not in verify.lower() or 'aprovado' not in verify.lower():
+            elif 'aprovada' not in verify or 'aprovado' not in verify:
                 status = self.checkTest(verify)
                 return status
-
         except:
             status = self.checkTest(verify)
             return status
         
     def checkTest(self, verify):
-        verify.replace('<','')
+        
         status = ''
-        users = ['@Anderson', '@Leandro', '@Vinicius', '@Lucas']
+        users = ['@anderson', '@leandro', '@vinicius', '@lucas']
         i = 0
 
         if 'testar' not in verify and 'validar' not in verify:
@@ -100,6 +103,8 @@ class MainTasks(LoginVSTS):
                 status = 'testar'
                 return status
             elif any(user in verify for user in users):
+                print(verify)
+                print(users[0])
                 for user in users:
                     if user in verify:
                         status = user + ' - testar'

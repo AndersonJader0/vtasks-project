@@ -18,7 +18,7 @@ class LoginVSTS:
         password = input('Digite sua senha: ')
         self.browser.maximize_window()
         self.browser.get('https://dev.azure.com/ONR-SAEC/ONR.Sustentacao/_boards/board/t/ONR.Sustentacao%20Team/Backlog%20items')
-        self.browser.implicitly_wait(20)
+        self.browser.implicitly_wait(100)
  
         # Realizando o login
  
