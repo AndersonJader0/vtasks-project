@@ -47,14 +47,14 @@ class MainTasks(LoginVSTS):
             elif status != 'aprovada': 
                 if status == 'testar':
                     self.tasks[i]['STATUS'] = 'Testar'
-                elif status == 'Lucas - testar':
-                    self.tasks[i]['STATUS'] = status
-                elif status == 'Anderson - testar':
-                    self.tasks[i]['STATUS'] = status
-                elif status == 'Vinicius - testar':
-                    self.tasks[i]['STATUS'] = status
-                elif status == 'Leandro - testar':
-                    self.tasks[i]['STATUS'] = status
+                elif status == '@Lucas - testar':
+                    self.tasks[i]['STATUS'] = status.replace('@', '')
+                elif status == '@Anderson - testar':
+                    self.tasks[i]['STATUS'] = status.replace('@', '')
+                elif status == '@Vinicius - testar':
+                    self.tasks[i]['STATUS'] = status.replace('@', '')
+                elif status == '@Leandro - testar':
+                    self.tasks[i]['STATUS'] = status.replace('@', '')
                 else:
                     self.tasks[i]['STATUS'] = ''
             i += 1
@@ -89,33 +89,27 @@ class MainTasks(LoginVSTS):
     def checkTest(self, verify):
         verify.replace('<','')
         status = ''
-        if 'testar' in verify or 'validar' in verify:
-            if '@Lucas' in verify or '@Anderson' in verify or '@Vinicius' in verify or '@Leandro' in verify:
-                if '@Anderson' not in verify and '@Vinicius' not in verify and '@Leandro' not in verify:
-                    status = 'Lucas - testar'
-                    return status
-                elif '@Lucas' not in verify and '@Vinicius' not in verify and '@Leandro' not in verify:
-                    status = 'Anderson - testar'
-                    return status
-                elif '@Lucas' not in verify and '@Anderson' not in verify and '@Leandro' not in verify:
-                    status = 'Vinicius - testar'
-                    return status
-                elif '@Lucas' not in verify and '@Anderson' not in verify and '@Vinicius' not in verify:
-                    status = 'Leandro - testar'
-                    return status
-                elif '@Lucas' in verify and '@Anderson' in verify and '@Vinicius' in verify:
-                    status = 'testar'
-                    return status
-                else:
-                    status = 'testar'
-                    return status
+        users = ['@Anderson', '@Leandro', '@Vinicius', '@Lucas']
+        i = 0
+
+        if 'testar' not in verify and 'validar' not in verify:
+            status = ''
+            return status
+        else:
+            if all(user in verify for user in users):
+                status = 'testar'
+                return status
+            elif any(user in verify for user in users):
+                for user in users:
+                    if user in verify:
+                        status = user + ' - testar'
+                        i += 1
+                        if i == 2:
+                            return 'testar'
+                return status
             else:
                 status = ''
                 return status
-        elif 'testar' not in verify or 'validar' not in verify:
-            status = ''
-            return status
-
  
 mainTasks = MainTasks()
 mainTasks.getTasks()

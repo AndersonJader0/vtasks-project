@@ -1,0 +1,4 @@
+Com a atualização do dia 02/07/2024 foi implementado as seguintes funcionalidades:
+
+1 - É possível verificar as tarefas que solicitaram teste da equipe da deploy assim como para quem foi solicitado.
+2 - O Script detecta as tarefas que estão aprovadas em HML2 (Implementado para completar o sistema)
