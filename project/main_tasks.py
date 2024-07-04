@@ -6,21 +6,14 @@ import re
 
 
 class MainTasks(LoginVSTS):
-    tasks = []
-    environment = ''
-    PROD = ['prod', 'producao', 'produção']
-    PRE = ['pre', 'pré', 'pre-prod', 'pré-prod', 'pre-producao', 'pré-produção']
-    HML2 = ['hml','hml2','homologue','homologação']
-    USERS_DEPLOY = ['@anderson', '@leandro', '@vinicius', '@lucas']
- 
-    def _init_(self):
-        self.tasks = self.tasks
-        self.environment = self.environment
-        self.PROD = self.PROD
-        self.PRE = self.PRE
-        self.HML2 = self.HML2
-        self.USERS_DEPLOY = self.USERS_DEPLOY
+    def __init__(self):
         super()._init_()
+        self.tasks = []
+        self.environment = []
+        self.PROD = ['prod', 'producao', 'produção']
+        self.PRE = ['pre', 'pré', 'pre-prod', 'pré-prod', 'pre-producao', 'pré-produção']
+        self.HML2 = ['hml','hml2','homologue','homologação']
+        self.USERS_DEPLOY = ['@anderson', '@leandro', '@vinicius', '@lucas']
  
     def getTasks(self):
         self.Authentication()
@@ -99,7 +92,7 @@ class MainTasks(LoginVSTS):
             return status
         
     def formatText(self, text):
-        if text == '@lucas - testar' or text == '@anderson - testar' or text == '@leandro - testar' or text == '@vinicius - testar':
+        if any(user + ' - testar' in text for user in self.USERS_DEPLOY):
             text = text.replace('@', '')
             return text
         elif 'Sustentação - ' in text or 'Sustentação-' in text or 'sustentação -' in text or 'sustentação-' in text:
