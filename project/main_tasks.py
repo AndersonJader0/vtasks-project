@@ -81,7 +81,8 @@ class MainTasks(LoginVSTS):
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             verify = self.formatText(verify)
-            if 'aprovada' in verify or 'aprovado' in verify:
+            APROVADA = ['aprovada', 'aprovado', 'ok em pré', 'correto em pré', 'correto em pre', 'correta em pré', 'correta em pre']
+            if any(aprov in verify for aprov in APROVADA):
                 self.checkEffort()
                 status = 'aprovada'
                 if any(prod in verify for prod in self.PROD):
@@ -93,7 +94,7 @@ class MainTasks(LoginVSTS):
                 elif any(hml2 in verify for hml2 in self.HML2):
                     self.environment = 'HML2'
                     return status
-            elif 'aprovada' not in verify or 'aprovado' not in verify:
+            elif all(aprov not in verify for aprov in APROVADA):
                 status = self.checkTest(verify)
                 return status
         except:
