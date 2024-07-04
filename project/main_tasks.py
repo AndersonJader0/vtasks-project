@@ -81,20 +81,23 @@ class MainTasks(LoginVSTS):
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
             verify = self.formatText(verify)
+            verify2 = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
+            verify2 = self.formatText(verify2)
+
             APROVADA = ['aprovada', 'aprovado', 'ok em pré', 'correto em pré', 'correto em pre', 'correta em pré', 'correta em pre']
-            if any(aprov in verify for aprov in APROVADA):
+            if any(aprov in verify for aprov in APROVADA) or any(aprov in verify2 for aprov in APROVADA):
                 self.checkEffort()
                 status = 'aprovada'
-                if any(prod in verify for prod in self.PROD):
+                if any(prod in verify for prod in self.PROD) or any(prod in verify2 for prod in self.PROD):
                     self.environment = 'PROD'
                     return status
-                elif any(pre in verify for pre in self.PRE):
+                elif any(pre in verify for pre in self.PRE) or any(pre in verify2 for pre in self.PRE):
                     self.environment = 'PRE'
                     return status
-                elif any(hml2 in verify for hml2 in self.HML2):
+                elif any(hml2 in verify for hml2 in self.HML2) or any(hml in verify2 for hml in self.HML2):
                     self.environment = 'HML2'
                     return status
-            elif all(aprov not in verify for aprov in APROVADA):
+            elif all(aprov not in verify for aprov in APROVADA) and all(aprov not in verify2 for aprov in APROVADA):
                 status = self.checkTest(verify)
                 return status
         except:

@@ -13,3 +13,4 @@ Com a atualização do dia 04/07/2024 foi implementado:
 1 - Melhoria no método checkTasks
 2 - Correção do método construtor
 3 - Implementação da nova funcionalidade verificar Effort
+4 - Checagem de um segundo comentário para integridade da aprovação

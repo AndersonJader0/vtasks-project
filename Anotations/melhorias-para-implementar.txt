@@ -11,3 +11,4 @@ Melhorias para implementar
 6 - Melhorar a formatação dos textos sustentação e prioridade - feito
 7 - Mapear tarefas de teste direto em PROD
 8 - Mapear Tarefas reprovadas
+9 - Analisar a possibilidade de checar todos os comentários ou um segundo comentário
