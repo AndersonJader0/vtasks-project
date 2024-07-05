@@ -80,28 +80,28 @@ class MainTasks(LoginVSTS):
         num_committed.click()
         try:
             verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
-            verify = self.formatText(verify)
             verify2 = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
-            verify2 = self.formatText(verify2)
+            comment = verify + verify2
+            comment = self.formatText(comment)
 
             APROVADA = ['aprovada', 'aprovado', 'ok em pré', 'correto em pré', 'correto em pre', 'correta em pré', 'correta em pre']
-            if any(aprov in verify for aprov in APROVADA) or any(aprov in verify2 for aprov in APROVADA):
+            if any(aprov in comment for aprov in APROVADA):
                 self.checkEffort()
                 status = 'aprovada'
-                if any(prod in verify for prod in self.PROD) or any(prod in verify2 for prod in self.PROD):
+                if any(prod in comment for prod in self.PROD):
                     self.environment = 'PROD'
                     return status
-                elif any(pre in verify for pre in self.PRE) or any(pre in verify2 for pre in self.PRE):
+                elif any(pre in comment for pre in self.PRE):
                     self.environment = 'PRE'
                     return status
-                elif any(hml2 in verify for hml2 in self.HML2) or any(hml in verify2 for hml in self.HML2):
+                elif any(hml2 in comment for hml2 in self.HML2):
                     self.environment = 'HML2'
                     return status
-            elif all(aprov not in verify for aprov in APROVADA) and all(aprov not in verify2 for aprov in APROVADA):
-                status = self.checkTest(verify)
+            elif all(aprov not in comment for aprov in APROVADA):
+                status = self.checkTest(comment)
                 return status
         except:
-            status = self.checkTest(verify)
+            status = self.checkTest(comment)
             return status
         
     def formatText(self, text):
@@ -123,20 +123,20 @@ class MainTasks(LoginVSTS):
             text = text.lower()
             return text
         
-    def checkTest(self, verify):
+    def checkTest(self, comment):
         status = ''
         i = 0
 
-        if 'testar' not in verify and 'validar' not in verify:
+        if 'testar' not in comment and 'validar' not in comment:
             status = ''
             return status
         else:
-            if all(user in verify for user in self.USERS_DEPLOY):
+            if all(user in comment for user in self.USERS_DEPLOY):
                 status = 'testar'
                 return status
-            elif any(user in verify for user in self.USERS_DEPLOY):
+            elif any(user in comment for user in self.USERS_DEPLOY):
                 for user in self.USERS_DEPLOY:
-                    if user in verify:
+                    if user in comment:
                         status = user + ' - testar'
                         i += 1
                         if i == 2:
