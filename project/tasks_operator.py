@@ -1,14 +1,14 @@
 ## Refatorar
 
 
-from login_vsts import LoginVSTS
+from login_azure import LoginAzure
 from excel_generator import excelGenerator
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import re
 
 
-class TasksOperator(LoginVSTS):
+class TasksOperator(LoginAzure):
     def __init__(self):
         super()._init_()
         self.tasks = []

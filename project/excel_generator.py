@@ -2,7 +2,7 @@ import pandas as pd
 from openpyxl.styles import Alignment
 from xlsxwriter import Workbook
 
-class excelGenerator():
+class ExcelGenerator():
  
     def getExcel(self, tasks, tasks_aproveds):
         try:
