@@ -1,14 +1,10 @@
 Melhorias para implementar
 
 1 - Melhorar a legibilidade do código (Em constância)
-2 - Mapear tarefas que deram rollback
-3 - Mapear effort das tarefas (só as que estão aprovadas) - feito
-4 - Verificar se as tarefas aprovadas estão na feature deploy 
+2 - Verificar se as tarefas aprovadas estão na feature deploy - Vale a pena consulta essa ideia
 : um novo campo 'FEATURE' com resultados das tarefas que foram aprovadas
-: DEPLOY
-: nenhuma
-5 - Melhorar o excel gerado
-6 - Melhorar a formatação dos textos sustentação e prioridade - feito
-7 - Mapear tarefas de teste direto em PROD
-8 - Mapear Tarefas reprovadas
-9 - Analisar a possibilidade de checar todos os comentários ou um segundo comentário
+: NÃO - Padrão
+: SIM
+3 - Melhorar o código excel gerado
+4 - Mapear essas ideias de uma forma melhor
+5 - Refatorar o tasksoperator e ter uma main aumentar a legibilidade do código

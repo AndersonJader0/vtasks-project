@@ -1,3 +1,6 @@
+## Refatorar
+
+
 from login_vsts import LoginVSTS
 from excel_generator import excelGenerator
 from selenium.webdriver.common.by import By
@@ -5,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 
 
-class MainTasks(LoginVSTS):
+class TasksOperator(LoginVSTS):
     def __init__(self):
         super()._init_()
         self.tasks = []
@@ -17,7 +20,7 @@ class MainTasks(LoginVSTS):
         self.hasEffort = False
         self.effort = ''
  
-    def getTasks(self):
+    def get_tasks(self):
         self.Authentication()
         self.wait.until(EC.presence_of_element_located((By.XPATH , '//button[@class="bolt-button enabled subtle bolt-focus-treatment"]')))
  
@@ -27,15 +30,15 @@ class MainTasks(LoginVSTS):
         num_approveds = 0
         i = 0
         for num_committed, name_committed in zip(num_committeds, name_committeds):
-            name_committed = self.formatText(name_committed.text) 
+            name_committed = self.format_text(name_committed.text) 
             self.tasks.append({
                 'PBI':num_committed.text,
                 'DESCRIÇÃO':name_committed,
                 'STATUS': '',
                 'EFFORT': ''
             })
-            status = self.checkTasks(num_committed)
-            status = self.formatText(status)
+            status = self.check_tasks(num_committed)
+            status = self.format_text(status)
 
             if status == 'aprovada':
                 match self.environment:
@@ -76,17 +79,17 @@ class MainTasks(LoginVSTS):
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
 
-    def checkTasks(self, num_committed):
+    def check_tasks(self, num_committed):
         num_committed.click()
         try:
-            verify = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
-            verify2 = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
-            comment = verify + verify2
-            comment = self.formatText(comment)
+            first_comment = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
+            second_comment = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
+            comment = first_comment + second_comment
+            comment = self.format_text(comment)
 
             APROVADA = ['aprovada', 'aprovado', 'ok em pré', 'correto em pré', 'correto em pre', 'correta em pré', 'correta em pre']
             if any(aprov in comment for aprov in APROVADA):
-                self.checkEffort()
+                self.check_effort()
                 status = 'aprovada'
                 if any(prod in comment for prod in self.PROD):
                     self.environment = 'PROD'
@@ -98,13 +101,13 @@ class MainTasks(LoginVSTS):
                     self.environment = 'HML2'
                     return status
             elif all(aprov not in comment for aprov in APROVADA):
-                status = self.checkTest(comment)
+                status = self.check_test(comment)
                 return status
         except:
-            status = self.checkTest(comment)
+            status = self.check_test(comment)
             return status
         
-    def formatText(self, text):
+    def format_text(self, text):
         if any(user + ' - testar' in text for user in self.USERS_DEPLOY):
             text = text.replace('@', '')
             return text
@@ -123,7 +126,7 @@ class MainTasks(LoginVSTS):
             text = text.lower()
             return text
         
-    def checkTest(self, comment):
+    def check_test(self, comment):
         status = ''
         i = 0
 
@@ -146,7 +149,7 @@ class MainTasks(LoginVSTS):
                 status = ''
                 return status
             
-    def checkEffort(self):
+    def check_effort(self):
         try:
             self.effort = self.browser.find_element(By.XPATH, '//div[@class="work-item-form-control-wrapper"][2]/div/div[2]/div/div/input')
             self.effort = self.effort.get_attribute('value')
@@ -157,5 +160,5 @@ class MainTasks(LoginVSTS):
             print('Erro')
             return
  
-mainTasks = MainTasks()
-mainTasks.getTasks()
+tasksOperator = TasksOperator()
+tasksOperator.get_tasks()
