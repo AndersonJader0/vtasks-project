@@ -20,12 +20,17 @@ class TasksOperator(LoginVSTS):
         self.hasEffort = False
         self.effort = ''
  
+# ----------------------------------
+#   Obtenção das tarefas
+# ----------------------------------
+    
     def get_tasks(self):
-        self.Authentication()
+        self.authenticate()
         self.wait.until(EC.presence_of_element_located((By.XPATH , '//button[@class="bolt-button enabled subtle bolt-focus-treatment"]')))
  
         num_committeds = self.browser.find_elements(By.XPATH, '//div[@class="flex-column flex-grow kanban-board-column padding-bottom-8"][3]/div/div/span/a/span[2]')
         name_committeds = self.browser.find_elements(By.XPATH, '//div[@class="flex-column flex-grow kanban-board-column padding-bottom-8"][3]/div/div/span/a/span[3]')
+
  
         num_approveds = 0
         i = 0
@@ -79,11 +84,21 @@ class TasksOperator(LoginVSTS):
         tasks_excel = excelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
 
+# ----------------------------------
+#   Verificação se está aprovada
+# ----------------------------------
+    
     def check_tasks(self, num_committed):
         num_committed.click()
         try:
             first_comment = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"]/div[2]').text
-            second_comment = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
+            second_comment = ''
+            try: 
+                self.browser.implicitly_wait(1)
+                second_comment = self.browser.find_element(By.XPATH, '//div[@class="comment-item flex-row displayed-comment depth-8 markdown-discussion-comment"][2]/div[2]').text
+            except:
+                self.browser.implicitly_wait(10)
+                second_comment = ''
             comment = first_comment + second_comment
             comment = self.format_text(comment)
 
@@ -107,6 +122,10 @@ class TasksOperator(LoginVSTS):
             status = self.check_test(comment)
             return status
         
+# ----------------------------------
+#   Tratamento do texto do título
+# ----------------------------------
+    
     def format_text(self, text):
         if any(user + ' - testar' in text for user in self.USERS_DEPLOY):
             text = text.replace('@', '')
@@ -126,6 +145,10 @@ class TasksOperator(LoginVSTS):
             text = text.lower()
             return text
         
+# ----------------------------------
+#   Verificação quem precisa testar
+# ----------------------------------
+    
     def check_test(self, comment):
         status = ''
         i = 0
@@ -149,6 +172,10 @@ class TasksOperator(LoginVSTS):
                 status = ''
                 return status
             
+# ----------------------------------
+#   Verificação se possui effort
+# ----------------------------------
+
     def check_effort(self):
         try:
             self.effort = self.browser.find_element(By.XPATH, '//div[@class="work-item-form-control-wrapper"][2]/div/div[2]/div/div/input')
