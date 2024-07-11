@@ -2,7 +2,7 @@
 
 
 from login_azure import LoginAzure
-from excel_generator import excelGenerator
+from excel_generator import ExcelGenerator
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import re
@@ -81,7 +81,7 @@ class TasksOperator(LoginAzure):
                         self.tasks[i]['STATUS'] = ''
             i += 1
             self.browser.back()
-        tasks_excel = excelGenerator()
+        tasks_excel = ExcelGenerator()
         tasks_excel.getExcel(self.tasks, num_approveds)
 
 # ----------------------------------

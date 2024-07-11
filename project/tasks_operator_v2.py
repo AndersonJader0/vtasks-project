@@ -10,6 +10,7 @@ class TasksOperator(LoginAzure):
     def __init__(self):
         super()._init_()
         self.tasks = []
+        self.tasks_ordened = []
         self.environment = None
 
     def get_tasks(self):
@@ -25,15 +26,22 @@ class TasksOperator(LoginAzure):
             if self.tasks[i]['STATUS'].startswith('OK'):
                 number_approveds += 1
 
-        excel = ExcelGenerator()
-        excel.getExcel(self.tasks, number_approveds)
+        # print(sorted(int(self.tasks[]['PBI'].values())))
+
+        # for task in self.tasks:
+        print(max(self.tasks['PBI'].values()))
+        # print(max(int(self.tasks['PBI'].values)))
+
+
+        # excel = ExcelGenerator()
+        # excel.getExcel(self.tasks, number_approveds)
 
     def process_task(self, number_committed, name_committed, index):
         number_committed_text = number_committed.text
         name_committed_text = self.format_text_task(name_committed.text)
         
         self.tasks.append({
-            'PBI': number_committed_text,
+            'PBI': int(number_committed_text),
             'DESCRIÇÃO': name_committed_text,
             'STATUS': '',
             'EFFORT': '',
