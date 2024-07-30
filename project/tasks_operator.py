@@ -7,7 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 import re
 
-
 class TasksOperator(LoginAzure):
     def __init__(self):
         super()._init_()
@@ -119,6 +118,8 @@ class TasksOperator(LoginAzure):
                 status = self.check_test(comment)
                 return status
         except:
+            comment = ''
+            print('passou aqui')
             status = self.check_test(comment)
             return status
         
